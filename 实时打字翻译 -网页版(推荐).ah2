@@ -35,17 +35,18 @@ main()
     g_eb.hide()
 
 	HotIfWinExist("ahk_class RiotWindowClass")
-        Hotkey('*XButton1', (key) => input_sound()) ;打开翻译器
-        Hotkey('*XButton2', (key) => send_command('Primitive')) ;打开翻译器
+        Hotkey('XButton1', (key) => input_sound()) ;打开翻译器
+        Hotkey('XButton2', (key) => send_command('Primitive')) ;打开翻译器
+        Hotkey('!XButton2', (key) => (g_eb.text := '/all ' g_eb.text, send_command('Primitive'))) ;打开翻译器
     HotIf()
     Hotkey('!i', (key) => input_sound()) ;打开翻译器
-    Hotkey('!y', (key) => fanyi()) ;打开翻译器
+    Hotkey('!z', (key) => fanyi()) ;打开翻译器
     Hotkey('^!y', (key) => fanyi_clipboard()) ;翻译粘贴板文本
     Hotkey('^f7', (key) => g_eb.debug()) ;调试
     Hotkey('~Esc', (key) => g_eb.hide()) ;退出
 	HotIfWinExist("ahk_id " g_eb.ui.hwnd)
         Hotkey("!enter", sound_play) ;发音
-        Hotkey("enter", (key) => send_command('translate')) ;发送文本
+        Hotkey("^", (key) => send_command('translate')) ;发送文本
         Hotkey("^enter", (key) => send_command('Primitive')) ;发送原始文本
         Hotkey("~tab", tab_send) ;切换API
         Hotkey("^v", paste) ;粘贴
@@ -57,9 +58,9 @@ main()
     help_text := '
     (
         欢迎使用实时打字翻译工具
-        ALT Y : 打开(键盘输入)
+        ALT z : 打开(键盘输入)
         ALT I : 打开(语音输入)
-        ENTER : 发送结果
+        CTRL : 发送结果
         CTRL ENTER : 发送原始文本
         ALT ENTER : 发音
         CTRL F7 : 展示当前API网页原始内容
@@ -155,7 +156,7 @@ send_command(p*)
         if(p[1] == 'Primitive')
             A_Clipboard := data
         else
-            A_Clipboard := g_eb.fanyi_result
+            A_Clipboard := g_eb.fanyi_result, data := g_eb.fanyi_result
         if(g_window_hwnd)
         {
             try
@@ -167,11 +168,11 @@ send_command(p*)
 
         if(WinActive('ahk_class RiotWindowClass'))
         {
-            SendInput("{Enter}")
+            SendInput("{CTRL}")
             Sleep(200)
             SendCn(data)
             Sleep(400)
-            SendInput("{Enter}")
+            SendInput("{CTRL}")
         }
         else
             SendInput('{RShift Down}{Insert}{RShift Up}')
